@@ -7,6 +7,7 @@
     <link href="/style.css" rel="stylesheet" />
     <script src="/angular/angular.js" defer></script>
     <script src="/js/module.js" defer></script>
+    <script src="/js/player/player.factory.js" defer></script>
     <script src="/js/album/album.controllers.js" defer></script>
     <script src="/js/player/player.controller.js" defer></script>
   </head>
@@ -27,7 +28,7 @@
       <div class="col-xs-10">
         <div class="album" ng-controller="AlbumCtrl">
           <p>
-            <h3>{{ album.name }}</h3>
+            <h3>{{ album.name }}, {{album.duration }}</h3>
             <img ng-src="{{ album.imageUrl }}" class="img-thumbnail">
           </p>
           <table class='table'>
@@ -42,7 +43,7 @@
             <tbody>
               <tr ng-repeat="song in album.songs" ng-class="{active: song === currentSong}">
                 <td>
-                  <button class="btn btn-default btn-xs" ng-click="toggle(song)">
+                  <button class="btn btn-default btn-xs" ng-click="toggle(song,album.songs)">
                     <span class="glyphicon" ng-class="{'glyphicon-pause': playing && song === currentSong, 'glyphicon-play': song !== currentSong || !playing}"></span>
                   </button>
                 </td>
@@ -56,7 +57,7 @@
       </div>
 
       <footer>
-        <div ng-show="currentSong" ng-controller="PlayerCtrl">
+        <div ng-show="playing" ng-controller="PlayerCtrl">
           <div class="pull-left">
             <button class="btn btn-default" ng-click="prev()">
               <span class="glyphicon glyphicon-step-backward"></span>

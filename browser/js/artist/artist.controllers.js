@@ -2,7 +2,7 @@
 
 /* ARTISTS (PLURAL) CONTROLLER */
 
-juke.controller('ArtistsCtrl', function ($scope, $log, $rootScope, ArtistFactory) {
+juke.controller('ArtistsCtrl', function ($scope, $log, ArtistFactory) {
 
   $scope.$on('viewSwap', function (event, data) {
     if (data.name !== 'allArtists') return $scope.showMe = false;
@@ -10,7 +10,7 @@ juke.controller('ArtistsCtrl', function ($scope, $log, $rootScope, ArtistFactory
   });
 
   $scope.viewOneArtist = function (artist) {
-    $rootScope.$broadcast('viewSwap', { name: 'oneArtist', id: artist._id });
+    //$rootScope.$broadcast('viewSwap', { name: 'oneArtist', id: artist._id });
   };
 
   ArtistFactory.fetchAll()
@@ -23,20 +23,18 @@ juke.controller('ArtistsCtrl', function ($scope, $log, $rootScope, ArtistFactory
 
 /* ARTIST (SINGULAR) CONTROLLER */
 
-juke.controller('ArtistCtrl', function ($scope, $log, ArtistFactory, PlayerFactory, $rootScope) {
+juke.controller('ArtistCtrl', function ($scope, $log, ArtistFactory, PlayerFactory, $rootScope,$stateParams) {
 
-  $scope.$on('viewSwap', function (event, data) {
 
-    if (data.name !== 'oneArtist') return $scope.showMe = false;
-    $scope.showMe = true;
 
-    ArtistFactory.fetchById(data.id)
+var theId = $stateParams.id;
+    ArtistFactory.fetchById(theId)
     .then(artist => {
       $scope.artist = artist;
     })
     .catch($log.error);
 
-  });
+
 
   $scope.getCurrentSong = function () {
     return PlayerFactory.getCurrentSong();

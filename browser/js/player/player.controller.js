@@ -2,38 +2,17 @@
 
 juke.controller('PlayerCtrl', function($scope, $rootScope, PlayerFactory) {
 
-    // initialize audio player (note this kind of DOM stuff is odd for Angular)
+    $scope.currentSong = PlayerFactory.getCurrentSong;
+    $scope.playing = PlayerFactory.isPlaying;
+    $scope.progress = PlayerFactory.getProgress;
+    $scope.next = PlayerFactory.next;
+    $scope.prev = PlayerFactory.previous;
 
-
-    // state
-    $scope.currentSong = PlayerFactory.currentSong;
-    $scope.playing = false;
-
-    // main toggle
-    $scope.toggle = function(song) {
-
-      //  PlayerFactory.pause();
-      $scope.playing = true;
-        play(song);
-      
+    $scope.toggle = function() {
+        if (PlayerFactory.isPlaying()) {
+            PlayerFactory.pause();
+        } else {
+            PlayerFactory.resume();
+        }
     };
-
-    // functionality
-
-
-    function play(song) {
-        $scope.playing = true;
-        $scope.currentSong = song;
-        PlayerFactory.start(song);
-    }
-
-    // outgoing events (to Album… or potentially other characters)
-    $scope.next = function() {
-        PlayerFactory.next();
-    };
-
-    $scope.prev = function() {
-        PlayerFactory.previous();
-    };
-
 });

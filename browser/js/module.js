@@ -24,6 +24,16 @@ var juke = angular.module('juke', ['ui.router'])
         url: '/artist/:id',
         templateUrl: 'artist.html',
         controller: 'ArtistCtrl'
+    })
+    .state('artist.albums', {
+        url: '/albums',
+        templateUrl: 'artist.albums.html',
+        controller: 'ArtistCtrl'
+    })
+    .state('artist.songs', {
+        url: '/songs',
+        templateUrl: 'artist.songs.html',
+        controller: 'ArtistCtrl'
     });
 
 });

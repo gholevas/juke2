@@ -2,7 +2,7 @@
 
 /* ALBUMS (SINGULAR) CONTROLLER */
 
-juke.controller('AlbumCtrl', function($scope, $log, PlayerFactory, AlbumFactory, $stateParams, album) {
+juke.controller('AlbumCtrl', function($scope, PlayerFactory, album) {
 
     $scope.album = album;
 
@@ -30,7 +30,7 @@ juke.controller('AlbumCtrl', function($scope, $log, PlayerFactory, AlbumFactory,
 
 /* ALBUMS (PLURAL) CONTROLLER */
 
-juke.controller('AlbumsCtrl', function($scope, $log, PlayerFactory, AlbumFactory, albums) {
+juke.controller('AlbumsCtrl', function($scope, albums) {
 
     $scope.albums = albums;
 

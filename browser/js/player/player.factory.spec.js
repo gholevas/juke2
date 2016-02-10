@@ -3,8 +3,13 @@ var expect = chai.expect;
 describe('`PlayerFactory` factory', function () {
   beforeEach(module('juke')); // loads our app
 
-  var audioMock, PlayerFactory, song1, song2;
+  var song1, song2;
+  before(function () {
+    song1 = { audioUrl: 'http://www.stephaniequinn.com/Music/Allegro%20from%20Duet%20in%20C%20Major.mp3' };
+    song2 = { audioUrl: 'http://www.stephaniequinn.com/Music/Jazz%20Rag%20Ensemble%20-%2010.mp3' };
+  });
 
+  var audioMock, PlayerFactory;
   beforeEach(function () {
     // mock audio
     var createElement = document.createElement;
@@ -15,15 +20,10 @@ describe('`PlayerFactory` factory', function () {
       }
       return elem;
     };
-    // test song sources
   });
-  before(function(){
-    song1 = { audioUrl: 'http://www.stephaniequinn.com/Music/Allegro%20from%20Duet%20in%20C%20Major.mp3' };
-    song2 = { audioUrl: 'http://www.stephaniequinn.com/Music/Jazz%20Rag%20Ensemble%20-%2010.mp3' };
-  })
 
   afterEach(function () {
-    audioMock.pause();
+    if (audioMock) audioMock.pause();
   });
 
   beforeEach(inject(function ($injector) {
@@ -39,7 +39,7 @@ describe('`PlayerFactory` factory', function () {
     it('plays given song', function () {
       chai.spy.on(HTMLAudioElement.prototype, 'load');
       chai.spy.on(HTMLAudioElement.prototype, 'play');
-      PlayerFactory.start({ audioUrl: 'http://www.stephaniequinn.com/Music/Allegro%20from%20Duet%20in%20C%20Major.mp3' });
+      PlayerFactory.start(song1);
       expect(HTMLAudioElement.prototype.load).to.have.been.called();
       expect(HTMLAudioElement.prototype.play).to.have.been.called();
     });
@@ -174,30 +174,28 @@ describe('`PlayerFactory` factory', function () {
     });
 
     it('is a decimal between 0 and 1 corresponding to audio play progress', function (done) {
-      this.timeout(6000);
+      this.timeout(3000);
       audioMock.addEventListener('playing', function () {
         setTimeout(function () {
           // the song is about 59 seconds long
-          expect(PlayerFactory.getProgress()).to.be.closeTo(3/59, 0.01);
+          expect(PlayerFactory.getProgress()).to.be.closeTo(1.5/59, 0.01);
           done();
-        }, 3000);
+        }, 1500);
       });
       PlayerFactory.start(song1);
     });
 
     it('stays stable when paused', function (done) {
-      this.timeout(4000);
+      this.timeout(500);
       audioMock.addEventListener('playing', function () {
+        setTimeout(PlayerFactory.pause, 100);
+      });
+      audioMock.addEventListener('pause', function () {
+        var currentProgress = PlayerFactory.getProgress();
         setTimeout(function () {
-          PlayerFactory.pause();
-          audioMock.addEventListener('pause', function () {
-            var currentProgress = PlayerFactory.getProgress();
-            setTimeout(function () {
-              expect(PlayerFactory.getProgress()).to.equal(currentProgress);
-              done();
-            }, 1000);
-          });
-        }, 2000);
+          expect(PlayerFactory.getProgress()).to.equal(currentProgress);
+          done();
+        }, 50);
       });
       PlayerFactory.start(song1);
     });

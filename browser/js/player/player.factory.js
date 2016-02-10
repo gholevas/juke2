@@ -1,47 +1,83 @@
 'use strict';
 
-juke.factory('PlayerFactory', function($rootScope) {
-    var currentSong = null;
-    var progress = 0;
-    var songlist;
-    var cIndex = -1;
-    var audio = document.createElement('audio');
+juke.factory('PlayerFactory', function ($rootScope) {
 
-    audio.addEventListener('timeupdate', function() {
-        progress = 100 * audio.currentTime / audio.duration;
-        $rootScope.$digest();
-    });
+  // state
 
-    var tools = {
-        start : function(song,list){
-            tools.pause()
-            if(list) songlist = list;
-            audio.src = song.audioUrl;
-            audio.load();
-            audio.play();
-            currentSong = song;
-        },
-        next : function(){skip(1);},
-        previous : function() {skip(-1);},
-        pause : function() {audio.pause();},
-        resume : function() {audio.play();},
-        isPlaying : function() {return !audio.paused;},
-        getCurrentSong : function() {return currentSong;},
-        getProgress : function() {return progress;}
-    };
+  var playing = false,
+      currentSong = null,
+      currentList = [],
+      progress = 0;
 
-    function mod(num, m) {
-        return ((num % m) + m) % m;
-    };
+  // initialize the audio element
 
-    function skip(interval) {
-        cIndex = songlist.indexOf(currentSong);
-        cIndex = mod((cIndex + (interval || 1)), songlist.length);
-        currentSong = songlist[cIndex];
-        if (tools.isPlaying()) tools.start(currentSong)
-    };
+  var audio = document.createElement('audio');
 
+  // define the factory value
 
-    return tools;
-    
+  var player = {};
+
+  player.pause = function () {
+    audio.pause();
+    playing = false;
+  };
+
+  player.resume = function () {
+    audio.play();
+    playing = true;
+  };
+
+  player.start = function (song, list) {
+    player.pause();
+    audio.src = song.audioUrl;
+    audio.load();
+    currentSong = song;
+    currentList = list;
+    player.resume();
+  };
+
+  player.isPlaying = function () {
+    return playing;
+  };
+
+  player.getCurrentSong = function () {
+    return currentSong;
+  };
+
+  function mod (num, m) { return ((num % m) + m) % m; };
+
+  function skip (interval) {
+    var index = currentList.indexOf(currentSong);
+    index = mod(index + interval, currentList.length);
+    player.start(currentList[index], currentList);
+  }
+
+  player.next = function () {
+    skip(1);
+  };
+
+  player.previous = function () {
+    skip(-1);
+  };
+
+  player.getProgress = function () {
+    return progress;
+  };
+
+  // audio event listening
+
+  audio.addEventListener('ended', function () {
+    player.next();
+    $rootScope.$evalAsync();
+  });
+
+  audio.addEventListener('timeupdate', function () {
+    progress = audio.currentTime / audio.duration;
+    $rootScope.$evalAsync();
+  });
+
+  // return factory value
+
+  return player;
+
 });

@@ -1,13 +1,15 @@
 'use strict';
 
-juke.factory('PlayerFactory', function() {
+juke.factory('PlayerFactory', function($rootScope) {
     var currentSong = null;
     var progress = 0;
     var songlist;
     var cIndex = -1;
     var audio = document.createElement('audio');
+
     audio.addEventListener('timeupdate', function() {
-        progress = audio.currentTime / audio.duration;
+        progress = 100 * audio.currentTime / audio.duration;
+        $rootScope.$digest();
     });
 
     var tools = {

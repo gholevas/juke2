@@ -3,7 +3,11 @@
 var juke = angular.module('juke', ['ui.router'])
 
 
-.config(function($stateProvider) {
+.config(function($stateProvider,$urlRouterProvider) {
+
+	$urlRouterProvider.when('', '/albums');
+	$urlRouterProvider.when('/artist/:id', '/artist/:id/albums');
+
     $stateProvider
         .state('albumList', {
             url: '/albums',

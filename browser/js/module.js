@@ -6,7 +6,7 @@ var juke = angular.module('juke', ['ui.router'])
 .config(function($stateProvider, $urlRouterProvider, $locationProvider) {
 
     $urlRouterProvider
-        .when('', '/albums')
+        .when('/', '/albums')
         .when('/artist/:id', '/artist/:id/albums');
 
     $locationProvider.html5Mode(true);
